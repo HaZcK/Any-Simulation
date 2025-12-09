@@ -1,40 +1,90 @@
-const input = document.getElementById('cmd-input');
-const screen = document.getElementById('interface-layer');
-const dynamicZone = document.getElementById('dynamic-zone');
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Executor Terminal - Any-Simulation</title>
+    <style>
+        /* CSS KHUSUS EXECUTOR (Terintegrasi di sini untuk kemudahan) */
+        body { 
+            background-color: #0a0a0a; 
+            color: #0f0; 
+            font-family: 'Consolas', monospace; 
+            margin: 0; 
+            height: 100vh; 
+            overflow: hidden; 
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
 
-// --- DATABASE COMMANDS ---
-const commands = {
-    // 1. Command Utama
-    '.listscript': () => {
-        return `<span style="color:white">
-        AVAILABLE COMMANDS:
-        -------------------
-        1.  <b class="sys-warn">.OpenBts</b>    : Tampilkan/Edit Source Code HTML layar ini (Behind The Scene)
-        2.  <b>.makeFile [nama]</b> : Membuat file dummy di layar (DOM Manipulation)
-        3.  <b>.clear</b>       : Bersihkan layar
-        4.  <b>.time</b>        : Cek waktu server lokal
-        5.  <b>.sysinfo</b>     : Informasi Browser/OS
-        6.  <b>.matrix</b>      : Efek visual Matrix (Toggle)
-        7.  <b>.calc [a+b]</b>  : Hitung matematika sederhana
-        8.  <b>.destroy</b>     : Simulasi kerusakan sistem
-        9.  <b>.color [hex]</b> : Ubah warna text terminal
-        10. <b>.reboot</b>      : Restart ke Main Menu
-        11. <b>.whoami</b>      : Cek identitas user
-        -------------------
-        </span>`;
-    },
+        #interface-layer {
+            height: 90%;
+            overflow-y: auto;
+            border: 1px solid #333;
+            padding: 10px;
+            background: rgba(0,0,0,0.8);
+            position: relative; 
+        }
 
-    // 2. BEHIND THE SCENE (INTI PERMINTAAN)
-    '.OpenBts': () => {
-        // Mengambil seluruh HTML dari body
-        const rawHTML = document.getElementById('interface-layer').innerHTML;
+        /* Input Kanan Bawah */
+        .cmd-dock {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            background: #000;
+            border: 2px solid #0f0;
+            padding: 10px;
+            box-shadow: 0 0 15px #0f0;
+            display: flex;
+            align-items: center;
+            z-index: 999;
+        }
+
+        input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            width: 100%;
+            outline: none;
+            font-family: inherit;
+            margin-left: 10px;
+        }
+
+        /* Visual Elements */
+        .log-item { margin-bottom: 5px; border-bottom: 1px solid #111; }
+        .sys-success { color: #0f0; }
+        .sys-warn { color: yellow; }
+        .sys-error { color: red; }
+        .sys-code { color: #00ffff; white-space: pre-wrap; background: #222; padding: 10px; font-size: 0.8rem; }
         
-        // Mengubah karakter < dan > agar tampil sebagai teks, bukan render HTML
-        const safeHTML = rawHTML.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        
-        return `
-        <div class="sys-warn">--- BEHIND THE SCENE (SOURCE CODE) ---</div>
-        <div class="sys-warn">Mode: Read-Only View of DOM Structure</div>
+        /* Modifiable Elements by Command */
+        .dynamic-box {
+            display: inline-block;
+            border: 1px dashed #555;
+            margin: 5px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="interface-layer">
+        <div class="log-item">System initialized...</div>
+        <div class="log-item">Loading assets/Executor.html module...</div>
+        <div class="log-item">Welcome, User. Type <b style="color:white">.listscript</b> to start.</div>
+        <div id="dynamic-zone"></div>
+    </div>
+
+    <div class="cmd-dock">
+        <span>EXEC_CMD:~$</span>
+        <input type="text" id="cmd-input" placeholder="Enter command..." autofocus>
+    </div>
+
+    <script src="system.js"></script>
+</body>
+</html>
+<div class="sys-warn">Mode: Read-Only View of DOM Structure</div>
         <div class="sys-code">${safeHTML}</div>
         <div class="sys-warn">--------------------------------------</div>
         <div style="color:white">Tip: Gunakan command <b>.makeFile</b> untuk melihat perubahan kode di atas secara real-time.</div>
